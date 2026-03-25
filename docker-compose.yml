@@ -26,6 +26,9 @@ services:
         --name nakama1
         --database.address postgres://postgres:localdb@postgres:5432/nakama
         --logger.level DEBUG
+        --runtime.js_entrypoint main.js
+        --session.token_expiry_sec 7200
+        --session.refresh_token_expiry_sec 7200
     ports:
       - "7350:7350"
       - "7351:7351"
