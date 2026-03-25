@@ -1,7 +1,6 @@
 services:
   postgres:
     image: postgres:12.2-alpine
-    container_name: nakama-postgres
     restart: always
     environment:
       POSTGRES_DB: nakama
@@ -13,26 +12,29 @@ services:
       - data:/var/lib/postgresql/data
 
   nakama:
-    image: heroiclabs/nakama:3.15.0
-    container_name: nakama
+    image: heroiclabs/nakama:3.20.0
     depends_on:
       - postgres
     entrypoint:
       - "/bin/sh"
       - "-ecx"
       - >
-        echo "Waiting for Postgres to initialize...";
+        echo "Waiting for Postgres...";
         sleep 10;
-        /nakama/nakama migrate up --database.address postgres:localdb@postgres:5432/nakama &&
+        /nakama/nakama migrate up --database.address postgres://postgres:localdb@postgres:5432/nakama &&
         exec /nakama/nakama
         --name nakama1
-        --database.address postgres:localdb@postgres:5432/nakama
+        --database.address postgres://postgres:localdb@postgres:5432/nakama
         --logger.level DEBUG
+        --runtime.js_entrypoint main.js
+        --session.token_expiry_sec 7200
+        --session.refresh_token_expiry_sec 7200
     ports:
       - "7350:7350"
       - "7351:7351"
     volumes:
-      - ./modules:/nakama/data/modules   # ✅ CORRECT PLACE
+      - ./modules:/nakama/data/modules
+      - ./local.yml:/nakama/data/local.yml
 
 volumes:
   data:
