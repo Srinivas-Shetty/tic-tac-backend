@@ -1,0 +1,5 @@
+runtime:
+  path: "/nakama/data/modules"
+
+logger:
+  level: "DEBUG"
